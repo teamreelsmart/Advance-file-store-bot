@@ -384,3 +384,21 @@ async def unban(client: Client, message: Message):
         return await message.reply(f"**Error:** `{e}`")
 
 #==========================================================================#                
+
+
+#==========================================================================#
+
+@Client.on_message(filters.command('resetverifytime'))
+async def reset_verify_time(client: Client, message: Message):
+    if message.from_user.id not in client.admins:
+        return await message.reply(client.reply_text)
+
+    try:
+        user_id = int(message.text.split(maxsplit=1)[1])
+    except Exception:
+        return await message.reply("**Usage:** `/resetverifytime <userid>`")
+
+    await client.mongodb.reset_verify_access_until(user_id)
+    await message.reply(f"✅ Verify timer reset for `{user_id}`. User must verify again.")
+
+#==========================================================================#
