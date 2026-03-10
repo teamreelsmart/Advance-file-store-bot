@@ -12,14 +12,15 @@ from datetime import datetime, timedelta
 
 #===============================================================#
 
-def build_verify_path(client: Client, token: str) -> str:
+def build_verify_path(client: Client, verify_token: str, service_token: str) -> str:
     base = getattr(client, 'service_url', '').rstrip('/')
-    return f"{base}/verify/{token}" if base else f"https://t.me/{client.username}?start=verify_{token}"
+    return f"{base}/verify/{service_token}" if base else f"https://t.me/{client.username}?start=verify_{verify_token}"
 
 
 async def issue_verify_link(client: Client, message: Message, payload: str):
-    token = secrets.token_urlsafe(8).replace('-', '').replace('_', '')[:10]
-    deep_link = f"https://t.me/{client.username}?start=verify_{token}"
+    verify_token = secrets.token_urlsafe(8).replace('-', '').replace('_', '')[:10]
+    service_token = secrets.token_urlsafe(12).replace('-', '').replace('_', '')[:14]
+    deep_link = f"https://t.me/{client.username}?start=verify_{verify_token}"
     try:
         short_link = get_short(deep_link, client)
     except Exception as e:
@@ -27,12 +28,19 @@ async def issue_verify_link(client: Client, message: Message, payload: str):
         return await message.reply("Couldn't generate short link.")
 
     expires_at = datetime.now() + timedelta(seconds=max(int(getattr(client, 'verify_cooldown', 30)), 1))
-    await client.mongodb.create_verify_link(token, message.from_user.id, payload, short_link, expires_at)
+    await client.mongodb.create_verify_link(
+        verify_token,
+        service_token,
+        message.from_user.id,
+        payload,
+        short_link,
+        expires_at
+    )
 
     short_photo = client.messages.get("SHORT_PIC", "")
     short_caption = client.messages.get("SHORT_MSG", "")
     tutorial_link = getattr(client, 'tutorial_link', "https://t.me/HowToDownloadSnap/2")
-    service_link = build_verify_path(client, token)
+    service_link = build_verify_path(client, verify_token, service_token)
 
     await client.send_photo(
         chat_id=message.chat.id,
