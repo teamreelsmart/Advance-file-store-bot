@@ -238,10 +238,11 @@ class MongoDB:
 
     # ✅ VERIFY LINK FUNCTIONS
 
-    async def create_verify_link(self, token: str, user_id: int, payload: str, short_link: str, expires_at: datetime):
+    async def create_verify_link(self, token: str, service_token: str, user_id: int, payload: str, short_link: str, expires_at: datetime):
         await self.verify_links.update_one(
             {"_id": token},
             {"$set": {
+                "service_token": service_token,
                 "user_id": user_id,
                 "payload": payload,
                 "short_link": short_link,
@@ -254,6 +255,9 @@ class MongoDB:
 
     async def get_verify_link(self, token: str) -> dict:
         return await self.verify_links.find_one({"_id": token})
+
+    async def get_verify_link_by_service_token(self, service_token: str) -> dict:
+        return await self.verify_links.find_one({"service_token": service_token})
 
     async def mark_verify_link_used(self, token: str):
         await self.verify_links.update_one({"_id": token}, {"$set": {"used": True, "used_at": datetime.now()}})

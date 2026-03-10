@@ -301,7 +301,7 @@ async def verify_route_handler(request):
     if BOT_CLIENT is None:
         return web.Response(text="Bot is not ready. Please try again.", status=503)
 
-    data = await BOT_CLIENT.mongodb.get_verify_link(token)
+    data = await BOT_CLIENT.mongodb.get_verify_link_by_service_token(token)
     if not data:
         return web.Response(text="This verify link is invalid or expired.", status=404)
 
