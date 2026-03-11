@@ -41,20 +41,32 @@ async def issue_verify_link(client: Client, message: Message, payload: str):
     short_caption = client.messages.get("SHORT_MSG", "")
     tutorial_link = getattr(client, 'tutorial_link', "https://t.me/HowToDownloadSnap/2")
     service_link = build_verify_path(client, verify_token, service_token)
+    reply_markup = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("• ᴏᴘᴇɴ ʟɪɴᴋ", url=service_link),
+            InlineKeyboardButton("ᴛᴜᴛᴏʀɪᴀʟ •", url=tutorial_link)
+        ],
+        [
+            InlineKeyboardButton(" • ʙᴜʏ ᴘʀᴇᴍɪᴜᴍ •", url="https://t.me/SnapLoverXBot?start=premium")
+        ]
+    ])
 
-    await client.send_photo(
-        chat_id=message.chat.id,
-        photo=short_photo,
-        caption=f"{short_caption}\n\n⏱ Verify timer: {getattr(client, 'verify_cooldown', 30)}s",
-        reply_markup=InlineKeyboardMarkup([
-            [
-                InlineKeyboardButton("• ᴏᴘᴇɴ ʟɪɴᴋ", url=service_link),
-                InlineKeyboardButton("ᴛᴜᴛᴏʀɪᴀʟ •", url=tutorial_link)
-            ],
-            [
-                InlineKeyboardButton(" • ʙᴜʏ ᴘʀᴇᴍɪᴜᴍ •", url="https://t.me/SnapLoverXBot?start=premium")
-            ]
-        ])
+    caption = f"{short_caption}\n\n⏱ Verify timer: {getattr(client, 'verify_cooldown', 30)}s"
+    if short_photo:
+        try:
+            await client.send_photo(
+                chat_id=message.chat.id,
+                photo=short_photo,
+                caption=caption,
+                reply_markup=reply_markup
+            )
+            return
+        except Exception as e:
+            client.LOGGER(__name__, client.name).warning(f"Failed to send verify photo: {e}")
+
+    await message.reply(
+        caption,
+        reply_markup=reply_markup
     )
 
 
@@ -217,6 +229,9 @@ async def start_command(client: Client, message: Message):
 
             await client.mongodb.mark_verify_link_used(verify_token)
             await client.mongodb.reset_early_verify_violation(user_id)
+            if bool(getattr(client, "verify_access_time_enabled", False)):
+                access_hours = max(int(getattr(client, "verify_access_hours", 1)), 1)
+                await client.mongodb.set_verify_access_until(user_id, datetime.now() + timedelta(hours=access_hours))
             base64_string = verify_data.get("payload", "")
             original_payload = base64_string
             is_short_link = True
@@ -229,8 +244,14 @@ async def start_command(client: Client, message: Message):
         shortner_enabled = getattr(client, 'shortner_enabled', True)
 
         if not is_user_pro and user_id != OWNER_ID and not is_short_link and shortner_enabled:
-            await issue_verify_link(client, message, base64_string)
-            return
+            if bool(getattr(client, "verify_access_time_enabled", False)):
+                access_until = await client.mongodb.get_verify_access_until(user_id)
+                if not access_until or datetime.now() >= access_until:
+                    await issue_verify_link(client, message, base64_string)
+                    return
+            else:
+                await issue_verify_link(client, message, base64_string)
+                return
 
         # 6. Decode and prepare file IDs
         try:

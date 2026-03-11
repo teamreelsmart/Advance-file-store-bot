@@ -285,6 +285,24 @@ class MongoDB:
         data = await self.verify_users.find_one({"_id": user_id})
         return data.get("early_verify_count", 0) if data else 0
 
+    async def set_verify_access_until(self, user_id: int, access_until: datetime):
+        await self.verify_users.update_one(
+            {"_id": user_id},
+            {"$set": {"access_until": access_until, "updated_at": datetime.now()}},
+            upsert=True
+        )
+
+    async def get_verify_access_until(self, user_id: int):
+        data = await self.verify_users.find_one({"_id": user_id})
+        return data.get("access_until") if data else None
+
+    async def reset_verify_access_until(self, user_id: int):
+        await self.verify_users.update_one(
+            {"_id": user_id},
+            {"$unset": {"access_until": ""}, "$set": {"updated_at": datetime.now()}},
+            upsert=True
+        )
+
     # ✅ FSUB STATUS COLLECTION FUNCTIONS
 
     async def update_fsub_status(self, user_id: int, channel_id: int, status: str):
