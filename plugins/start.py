@@ -14,8 +14,7 @@ from datetime import datetime, timedelta
 
 def build_verify_path(client: Client, verify_token: str, service_token: str) -> str:
     base = getattr(client, 'service_url', '').rstrip('/')
-    return f"{base}/verify/{service_token}" if base else f"https://t.me/{client.username}?start=verify_{verify_token}"
-
+    return f"{base}/verify/{service_token}" if base else ""
 
 async def issue_verify_link(client: Client, message: Message, payload: str):
     verify_token = secrets.token_urlsafe(8).replace('-', '').replace('_', '')[:10]
@@ -41,22 +40,34 @@ async def issue_verify_link(client: Client, message: Message, payload: str):
     short_caption = client.messages.get("SHORT_MSG", "")
     tutorial_link = getattr(client, 'tutorial_link', "https://t.me/HowToDownloadSnap/2")
     service_link = build_verify_path(client, verify_token, service_token)
-    service_short_link = get_short(service_link, client)
+    if not service_link:
+        client.LOGGER(__name__, client.name).warning("SERVICE_URL not configured, cannot send service verify route link.")
+        return await message.reply("⚠️ Service URL is not configured. Ask admin to set SERVICE_URL.")
 
-    await client.send_photo(
-        chat_id=message.chat.id,
-        photo=short_photo,
-        caption=f"{short_caption}\n\n⏱ Verify timer: {getattr(client, 'verify_cooldown', 30)}s",
-        reply_markup=InlineKeyboardMarkup([
-            [
-                InlineKeyboardButton("• ᴏᴘᴇɴ ʟɪɴᴋ", url=service_short_link),
-                InlineKeyboardButton("ᴛᴜᴛᴏʀɪᴀʟ •", url=tutorial_link)
-            ],
-            [
-                InlineKeyboardButton(" • ʙᴜʏ ᴘʀᴇᴍɪᴜᴍ •", url="https://t.me/SnapLoverXBot?start=premium")
-            ]
-        ])
-    )
+    reply_markup = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("• ᴏᴘᴇɴ ʟɪɴᴋ", url=service_link),
+            InlineKeyboardButton("ᴛᴜᴛᴏʀɪᴀʟ •", url=tutorial_link)
+        ],
+        [
+            InlineKeyboardButton(" • ʙᴜʏ ᴘʀᴇᴍɪᴜᴍ •", url="https://t.me/SnapLoverXBot?start=premium")
+        ]
+    ])
+    caption = f"{short_caption}\n\n⏱ Verify timer: {getattr(client, 'verify_cooldown', 30)}s"
+
+    if short_photo:
+        try:
+            await client.send_photo(
+                chat_id=message.chat.id,
+                photo=short_photo,
+                caption=caption,
+                reply_markup=reply_markup
+            )
+            return
+        except Exception as e:
+            client.LOGGER(__name__, client.name).warning(f"Failed to send verify photo: {e}")
+            
+    await client.send_message(chat_id=message.chat.id, text=caption, reply_markup=reply_markup)
 
 
 
