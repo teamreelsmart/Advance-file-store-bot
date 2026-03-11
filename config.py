@@ -11,10 +11,14 @@ MSG_EFFECT = 5046509860389126442
 
 SHORT_URL = "arolinks.com" # shortner url 
 SHORT_API = "2bd6b41b022d08c3d13cbe229497092a5c30cc7e" 
+SHORT_URL_2 = os.environ.get("SHORT_URL_2", "")
+SHORT_API_2 = os.environ.get("SHORT_API_2", "")
 SHORT_TUT = "https://t.me/HowToDownloadSnap/2"
 VERIFY_COOLDOWN = int(os.environ.get("VERIFY_COOLDOWN", "180"))
-VERIFY_REDIRECT_DELAY = int(os.environ.get("VERIFY_REDIRECT_DELAY", "5"))
+VERIFY_REDIRECT_DELAY = int(os.environ.get("VERIFY_REDIRECT_DELAY", "3"))
 VERIFY_LOG_CHANNEL = int(os.environ.get("VERIFY_LOG_CHANNEL", "0"))
+VERIFY_ACCESS_TIME_ENABLED = os.environ.get("VERIFY_ACCESS_TIME_ENABLED", "False").lower() == "true"
+VERIFY_ACCESS_HOURS = int(os.environ.get("VERIFY_ACCESS_HOURS", "1"))
 SERVICE_URL = os.environ.get("SERVICE_URL", "")
 
 # Bot Configuration
