@@ -7,7 +7,7 @@ from pyrogram import Client
 from pyrogram.enums import ParseMode
 import sys
 from datetime import datetime
-from config import LOGGER, PORT, OWNER_ID, SHORT_URL, SHORT_API, SHORT_TUT, VERIFY_COOLDOWN, VERIFY_REDIRECT_DELAY, VERIFY_LOG_CHANNEL, SERVICE_URL
+from config import LOGGER, PORT, OWNER_ID, SHORT_URL, SHORT_API, SHORT_URL_2, SHORT_API_2, SHORT_TUT, VERIFY_COOLDOWN, VERIFY_REDIRECT_DELAY, VERIFY_LOG_CHANNEL, VERIFY_ACCESS_TIME_ENABLED, VERIFY_ACCESS_HOURS, SERVICE_URL
 from helper import MongoDB
 
 version = "v1.0.0"
@@ -131,22 +131,30 @@ class Bot(Client):
             shortner_settings = await self.mongodb.get_shortner_settings()
             self.short_url = shortner_settings.get('short_url', SHORT_URL)
             self.short_api = shortner_settings.get('short_api', SHORT_API)
+            self.short_url_2 = shortner_settings.get('short_url_2', SHORT_URL_2)
+            self.short_api_2 = shortner_settings.get('short_api_2', SHORT_API_2)
             self.tutorial_link = shortner_settings.get('tutorial_link', SHORT_TUT)
             self.shortner_enabled = shortner_settings.get('enabled', True)
             self.verify_cooldown = int(shortner_settings.get('verify_cooldown', VERIFY_COOLDOWN))
             self.verify_redirect_delay = int(shortner_settings.get('verify_redirect_delay', VERIFY_REDIRECT_DELAY))
             self.verify_log_channel = int(shortner_settings.get('verify_log_channel', VERIFY_LOG_CHANNEL))
+            self.verify_access_time_enabled = bool(shortner_settings.get('verify_access_time_enabled', VERIFY_ACCESS_TIME_ENABLED))
+            self.verify_access_hours = int(shortner_settings.get('verify_access_hours', VERIFY_ACCESS_HOURS))
             self.service_url = shortner_settings.get('service_url', SERVICE_URL)
         except Exception as e:
             self.LOGGER(__name__, self.name).warning(f"Error loading shortner settings: {e}")
             # Set defaults from config if loading fails
             self.short_url = SHORT_URL
             self.short_api = SHORT_API
+            self.short_url_2 = SHORT_URL_2
+            self.short_api_2 = SHORT_API_2
             self.tutorial_link = SHORT_TUT
             self.shortner_enabled = True
             self.verify_cooldown = VERIFY_COOLDOWN
             self.verify_redirect_delay = VERIFY_REDIRECT_DELAY
             self.verify_log_channel = VERIFY_LOG_CHANNEL
+            self.verify_access_time_enabled = VERIFY_ACCESS_TIME_ENABLED
+            self.verify_access_hours = VERIFY_ACCESS_HOURS
             self.service_url = SERVICE_URL
         
         try:
