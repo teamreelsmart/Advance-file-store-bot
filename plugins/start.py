@@ -25,7 +25,7 @@ async def issue_verify_link(client: Client, message: Message, payload: str):
         short_link = get_short(deep_link, client)
     except Exception as e:
         client.LOGGER(__name__, client.name).warning(f"Shortener failed: {e}")
-        return await message.reply("Couldn't generate short link.")
+        short_link = deep_link
 
     expires_at = datetime.now() + timedelta(seconds=max(int(getattr(client, 'verify_cooldown', 30)), 1))
     await client.mongodb.create_verify_link(
