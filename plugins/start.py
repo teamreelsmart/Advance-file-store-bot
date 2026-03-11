@@ -58,6 +58,7 @@ async def issue_verify_link(client: Client, message: Message, payload: str):
     )
 
 
+
 async def send_verify_bypass_warning(client: Client, message: Message, attempt_count: int, seconds_left: int):
     warning_photo = client.messages.get("VERIFY_WARN_PHOTO", client.messages.get("SHORT_PIC", ""))
     warning_text = client.messages.get(
@@ -217,6 +218,9 @@ async def start_command(client: Client, message: Message):
 
             await client.mongodb.mark_verify_link_used(verify_token)
             await client.mongodb.reset_early_verify_violation(user_id)
+            if bool(getattr(client, "verify_access_time_enabled", False)):
+                access_hours = max(int(getattr(client, "verify_access_hours", 1)), 1)
+                await client.mongodb.set_verify_access_until(user_id, datetime.now() + timedelta(hours=access_hours))
             base64_string = verify_data.get("payload", "")
             original_payload = base64_string
             is_short_link = True
@@ -229,8 +233,14 @@ async def start_command(client: Client, message: Message):
         shortner_enabled = getattr(client, 'shortner_enabled', True)
 
         if not is_user_pro and user_id != OWNER_ID and not is_short_link and shortner_enabled:
-            await issue_verify_link(client, message, base64_string)
-            return
+            if bool(getattr(client, "verify_access_time_enabled", False)):
+                access_until = await client.mongodb.get_verify_access_until(user_id)
+                if not access_until or datetime.now() >= access_until:
+                    await issue_verify_link(client, message, base64_string)
+                    return
+            else:
+                await issue_verify_link(client, message, base64_string)
+                return
 
         # 6. Decode and prepare file IDs
         try:
