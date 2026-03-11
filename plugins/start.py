@@ -59,6 +59,7 @@ async def issue_verify_link(client: Client, message: Message, payload: str):
     )
 
 
+
 async def send_verify_bypass_warning(client: Client, message: Message, attempt_count: int, seconds_left: int):
     warning_photo = client.messages.get("VERIFY_WARN_PHOTO", client.messages.get("SHORT_PIC", ""))
     warning_text = client.messages.get(
