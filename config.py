@@ -5,24 +5,24 @@ from logging.handlers import RotatingFileHandler
 # Bot Configuration
 LOG_FILE_NAME = "bot.log"
 PORT = '5010'
-OWNER_ID = 6891095964
+OWNER_ID = 7614593734
 
 MSG_EFFECT = 5046509860389126442
 
 SHORT_URL = "arolinks.com" # shortner url 
 SHORT_API = "2bd6b41b022d08c3d13cbe229497092a5c30cc7e" 
-SHORT_URL_2 = os.environ.get("SHORT_URL_2", "")
-SHORT_API_2 = os.environ.get("SHORT_API_2", "")
-SHORT_TUT = "https://t.me/HowToDownloadSnap/2"
+SHORT_URL_2 = os.environ.get("SHORT_URL_2", "arolinks.com")
+SHORT_API_2 = os.environ.get("SHORT_API_2", "2bd6b41b022d08c3d13cbe229497092a5c30cc7e")
+SHORT_TUT = "https://t.me/HowToDownloadorvix/2"
 VERIFY_COOLDOWN = int(os.environ.get("VERIFY_COOLDOWN", "180"))
 VERIFY_REDIRECT_DELAY = int(os.environ.get("VERIFY_REDIRECT_DELAY", "3"))
 VERIFY_LOG_CHANNEL = int(os.environ.get("VERIFY_LOG_CHANNEL", "0"))
-VERIFY_ACCESS_TIME_ENABLED = os.environ.get("VERIFY_ACCESS_TIME_ENABLED", "False").lower() == "true"
-VERIFY_ACCESS_HOURS = int(os.environ.get("VERIFY_ACCESS_HOURS", "1"))
+VERIFY_ACCESS_TIME_ENABLED = os.environ.get("VERIFY_ACCESS_TIME_ENABLED", "True").lower() == "true"
+VERIFY_ACCESS_HOURS = int(os.environ.get("VERIFY_ACCESS_HOURS", "8"))
 SERVICE_URL = os.environ.get("SERVICE_URL", "")
 
 # Bot Configuration
-SESSION = "GetBestKurkureBot"
+SESSION = "OrviXNetworkBot"
 TOKEN = os.environ.get("TOKEN", "")
 API_ID = os.environ.get("API_ID", "")
 API_HASH = os.environ.get("API_HASH", "")
@@ -31,9 +31,9 @@ WORKERS = 5
 DB_URI = os.environ.get("DB_URI", "")
 DB_NAME = "yato"
 
-FSUBS = [[-1003759386278, True, 10]] # Force Subscription Channels [channel_id, request_enabled, timer_in_minutes]
+FSUBS = [[-1003870553259, True, 10]] # Force Subscription Channels [channel_id, request_enabled, timer_in_minutes]
 # Database Channel (Primary)
-DB_CHANNEL = -1003591916255   # just put channel id dont add ""
+DB_CHANNEL = -1003761726740   # just put channel id dont add ""
 # Multiple Database Channels (can be set via bot settings)
 # DB_CHANNELS = {
 #     "-1002595092736": {"name": "Primary DB", "is_primary": True, "is_active": True},
@@ -42,7 +42,7 @@ DB_CHANNEL = -1003591916255   # just put channel id dont add ""
 # Auto Delete Timer (seconds)
 AUTO_DEL = 300
 # Admin IDs
-ADMINS = [6891095964]
+ADMINS = [7614593734]
 # Bot Settings
 DISABLE_BTN = True
 PROTECT = True
