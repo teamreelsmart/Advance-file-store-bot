@@ -84,12 +84,99 @@ async def settings_page_2(client, query):
     reply_markup = InlineKeyboardMarkup([
         [InlineKeyboardButton('ᴘʀᴏᴛᴇᴄᴛ ᴄᴏɴᴛᴇɴᴛ', 'protect'), InlineKeyboardButton('ᴘʜᴏᴛᴏs', 'photos')],
         [InlineKeyboardButton('ᴛᴇxᴛs', 'texts'), InlineKeyboardButton('sʜᴏʀᴛɴᴇʀ', 'shortner')],
-        [InlineKeyboardButton('ɢᴇɴ ᴄʜᴀɴɴᴇʟ ʟɪɴᴋ', 'gen_channel_link')],
+        [InlineKeyboardButton('ɢᴇɴ ᴄʜᴀɴɴᴇʟ ʟɪɴᴋ', 'gen_channel_link'), InlineKeyboardButton('ᴘʀᴇᴍɪᴜᴍ ᴘᴀʏ', 'premium_settings')],
         [InlineKeyboardButton('‹ ᴘʀᴇᴠ', 'settings'), InlineKeyboardButton('ʜᴏᴍᴇ', 'home')]
     ])
     await query.message.edit_text(msg, reply_markup=reply_markup)
     return
 
+
+#===============================================================#
+
+@Client.on_callback_query(filters.regex("^premium_settings$"))
+async def premium_settings(client, query):
+    if not query.from_user.id in client.admins:
+        return await query.answer('✗ ᴏɴʟʏ ᴀᴅᴍɪɴs ᴄᴀɴ ᴜsᴇ ᴛʜɪs!', show_alert=True)
+
+    msg = f"""<blockquote>**Premium Pay Settings:**</blockquote>
+**Image:** `{client.messages.get('PREMIUM_PHOTO', '')}`
+**Message:**
+<pre>{client.messages.get('PREMIUM_MSG', 'Empty')}</pre>
+**Button Text:** `💳 Pay With UPI`
+**Button URL:** `{client.messages.get('PREMIUM_BUTTON_URL', '')}`
+
+__These settings are used when a non-premium user opens a bot-generated file link and for the premium button on /start.__
+"""
+    reply_markup = InlineKeyboardMarkup([
+        [InlineKeyboardButton('ᴘᴀʏ ɪᴍᴀɢᴇ', 'set_premium_photo'), InlineKeyboardButton('ᴘᴀʏ ᴛᴇxᴛ', 'set_premium_text')],
+        [InlineKeyboardButton('ᴘᴀʏ ᴜʀʟ', 'set_premium_url')],
+        [InlineKeyboardButton('◂ ʙᴀᴄᴋ', 'settings_page_2')]
+    ])
+    await query.message.edit_text(msg, reply_markup=reply_markup)
+
+
+@Client.on_callback_query(filters.regex("^set_premium_text$"))
+async def set_premium_text(client, query):
+    await query.answer()
+    await query.message.edit_text("Send new premium locked message in the next 60 seconds, or send `0` to cancel.")
+    try:
+        res = await client.listen(user_id=query.from_user.id, filters=filters.text, timeout=60)
+        text = res.text.strip()
+        if text == '0':
+            return await query.message.edit_text("**Premium text has not changed!**", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton('◂ ʙᴀᴄᴋ', 'premium_settings')]]))
+        client.messages['PREMIUM_MSG'] = res.text
+        await client.mongodb.update_message_setting('PREMIUM_MSG', res.text)
+        return await query.message.edit_text("**Premium text has been changed!**", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton('◂ ʙᴀᴄᴋ', 'premium_settings')]]))
+    except ListenerTimeout:
+        return await query.message.edit_text("**Timeout, try again!**", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton('◂ ʙᴀᴄᴋ', 'premium_settings')]]))
+
+
+@Client.on_callback_query(filters.regex("^set_premium_url$"))
+async def set_premium_url(client, query):
+    await query.answer()
+    await query.message.edit_text("Send new premium button URL in the next 60 seconds, or send `0` to cancel.")
+    try:
+        res = await client.listen(user_id=query.from_user.id, filters=filters.text, timeout=60)
+        url = res.text.strip()
+        if url == '0':
+            return await query.message.edit_text("**Premium URL has not changed!**", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton('◂ ʙᴀᴄᴋ', 'premium_settings')]]))
+        if not (url.startswith('https://') or url.startswith('http://')):
+            return await query.message.edit_text("**Invalid URL! It must start with http:// or https://**", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton('◂ ʙᴀᴄᴋ', 'premium_settings')]]))
+        client.messages['PREMIUM_BUTTON_URL'] = url
+        await client.mongodb.update_message_setting('PREMIUM_BUTTON_URL', url)
+        return await query.message.edit_text("**Premium button URL has been changed!**", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton('◂ ʙᴀᴄᴋ', 'premium_settings')]]))
+    except ListenerTimeout:
+        return await query.message.edit_text("**Timeout, try again!**", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton('◂ ʙᴀᴄᴋ', 'premium_settings')]]))
+
+
+@Client.on_callback_query(filters.regex("^set_premium_photo$"))
+async def set_premium_photo(client, query):
+    await query.answer()
+    await query.message.edit_text(f"""<blockquote>**Change Premium Pay Image:**</blockquote>
+**Current Image:** `{client.messages.get('PREMIUM_PHOTO', '')}`
+
+__Enter new image link or send a photo in the next 60 seconds. Send `0` to remove it.__
+""")
+    try:
+        res = await client.listen(user_id=query.from_user.id, filters=(filters.text|filters.photo), timeout=60)
+        if res.text:
+            value = res.text.strip()
+            if value == '0':
+                client.messages['PREMIUM_PHOTO'] = ''
+                await client.mongodb.update_message_setting('PREMIUM_PHOTO', '')
+                return await query.message.edit_text("**Premium image removed!**", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton('◂ ʙᴀᴄᴋ', 'premium_settings')]]))
+            if value.startswith('https://') or value.startswith('http://'):
+                client.messages['PREMIUM_PHOTO'] = value
+                await client.mongodb.update_message_setting('PREMIUM_PHOTO', value)
+                return await query.message.edit_text("**Premium image link has been set!**", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton('◂ ʙᴀᴄᴋ', 'premium_settings')]]))
+        elif res.photo:
+            loc = await res.download()
+            client.messages['PREMIUM_PHOTO'] = loc
+            await client.mongodb.update_message_setting('PREMIUM_PHOTO', loc)
+            return await query.message.edit_text("**Premium image has been set!**", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton('◂ ʙᴀᴄᴋ', 'premium_settings')]]))
+        return await query.message.edit_text("**Invalid Photo or Link format!**", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton('◂ ʙᴀᴄᴋ', 'premium_settings')]]))
+    except ListenerTimeout:
+        return await query.message.edit_text("**Timeout, try again!**", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton('◂ ʙᴀᴄᴋ', 'premium_settings')]]))
 
 #===============================================================#
 

@@ -94,10 +94,37 @@ async def send_verify_bypass_warning(client: Client, message: Message, attempt_c
 
 
 
+async def send_premium_required(client: Client, message: Message):
+    photo = client.messages.get("PREMIUM_PHOTO", "")
+    text = client.messages.get(
+        "PREMIUM_MSG",
+        "<b>🔒 This file is only for premium users. Please buy premium to unlock it.</b>"
+    )
+    button_url = client.messages.get("PREMIUM_BUTTON_URL", "https://t.me/SnapLoverXBot?start=premium")
+    reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("💳 Pay With UPI", url=button_url)]])
+
+    if photo:
+        try:
+            return await client.send_photo(
+                chat_id=message.chat.id,
+                photo=photo,
+                caption=text,
+                reply_markup=reply_markup
+            )
+        except Exception as e:
+            client.LOGGER(__name__, client.name).warning(f"Failed to send premium photo: {e}")
+
+    return await message.reply(text, reply_markup=reply_markup)
+
+
 async def send_start_home(client: Client, message: Message):
     user_id = message.from_user.id
+    premium_url = client.messages.get("PREMIUM_BUTTON_URL", "https://t.me/SnapLoverXBot?start=premium")
     buttons = [
-        [InlineKeyboardButton("🎁 Refer & Earn", callback_data="refer_earn")],
+        [
+            InlineKeyboardButton("🎁 Refer & Earn", callback_data="refer_earn"),
+            InlineKeyboardButton("💳 Pay With UPI", url=premium_url)
+        ],
     ]
 
     buttons.append([InlineKeyboardButton("Help", callback_data="about"), InlineKeyboardButton("Close", callback_data='close')])
@@ -244,6 +271,10 @@ async def start_command(client: Client, message: Message):
 
         is_user_pro = await client.mongodb.is_pro(user_id)
         shortner_enabled = getattr(client, 'shortner_enabled', True)
+
+        if not is_user_pro and user_id != OWNER_ID and user_id not in client.admins:
+            await send_premium_required(client, message)
+            return
 
         if not is_user_pro and user_id != OWNER_ID and not is_short_link and shortner_enabled:
             if bool(getattr(client, "verify_access_time_enabled", False)):
