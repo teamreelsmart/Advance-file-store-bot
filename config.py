@@ -5,7 +5,7 @@ from logging.handlers import RotatingFileHandler
 # Bot Configuration
 LOG_FILE_NAME = "bot.log"
 PORT = '5010'
-OWNER_ID = 7614593734
+OWNER_ID = 6891095964
 
 MSG_EFFECT = 5046509860389126442
 
@@ -42,7 +42,7 @@ DB_CHANNEL = -1003761726740   # just put channel id dont add ""
 # Auto Delete Timer (seconds)
 AUTO_DEL = 300
 # Admin IDs
-ADMINS = [7614593734]
+ADMINS = [6891095964]
 # Bot Settings
 DISABLE_BTN = True
 PROTECT = True
