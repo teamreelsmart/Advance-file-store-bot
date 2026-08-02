@@ -32,7 +32,7 @@ class Bot(Client):
         self.owner = OWNER_ID
         self.fsub_dict = {}
         self.admins = admins + [OWNER_ID] if OWNER_ID not in admins else admins
-        self.messages = messages
+        self.messages = messages.copy()
         self.auto_del = auto_del
         self.protect = protect
         self.req_fsub = {}
@@ -126,6 +126,15 @@ class Bot(Client):
         except Exception as e:
             self.LOGGER(__name__, self.name).warning(f"Error loading DB channels: {e}")
         
+        # Load message settings from database
+        try:
+            db_messages = await self.mongodb.get_messages_settings()
+            if db_messages:
+                self.messages.update(db_messages)
+                self.reply_text = self.messages.get('REPLY', self.reply_text)
+        except Exception as e:
+            self.LOGGER(__name__, self.name).warning(f"Error loading message settings: {e}")
+
         # Load shortner settings from database
         try:
             shortner_settings = await self.mongodb.get_shortner_settings()
