@@ -14,87 +14,258 @@ async def root_route_handler(request):
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Snap Lover • Premium File Hub</title>
+        <title>OrvixNetworks • Premium File Hub</title>
         <style>
             :root {
-                --bg:#070b14;
-                --card:#111827;
-                --muted:#9ca3af;
+                --bg:#07111d;
+                --bg2:#0b1726;
+                --card:#0f1c2d;
+                --card2:#122131;
+                --muted:#9fb0c6;
                 --text:#f8fafc;
-                --accent:#22d3ee;
-                --accent2:#38bdf8;
-                --border:#1f2937;
+                --accent:#facc15;
+                --accent2:#fde68a;
+                --line:rgba(255,255,255,.08);
+                --shadow:0 20px 50px rgba(0,0,0,.35);
             }
             * { box-sizing: border-box; }
+            html { scroll-behavior:smooth; }
             body {
                 margin:0;
                 font-family: Inter, Arial, sans-serif;
-                background: radial-gradient(circle at top right, #0f172a 0%, var(--bg) 45%);
+                background:
+                    radial-gradient(circle at top right, rgba(250,204,21,.15), transparent 30%),
+                    radial-gradient(circle at bottom left, rgba(56,189,248,.10), transparent 28%),
+                    linear-gradient(180deg, #06101a 0%, #08111d 100%);
                 color:var(--text);
             }
-            .container { width:min(1100px, 92vw); margin:0 auto; }
+            a { color:inherit; }
+            .container { width:min(1120px, 92vw); margin:0 auto; }
             .nav {
-                position: sticky; top:0; z-index:5;
-                background: rgba(7,11,20,.85); backdrop-filter: blur(10px);
-                border-bottom:1px solid var(--border);
+                position: sticky; top:0; z-index:15;
+                background: rgba(7,17,29,.78);
+                backdrop-filter: blur(14px);
+                border-bottom:1px solid var(--line);
             }
-            .nav-inner { display:flex; align-items:center; justify-content:space-between; padding:14px 0; }
-            .brand { font-weight:800; letter-spacing:.3px; }
+            .nav-inner { display:flex; align-items:center; justify-content:space-between; padding:14px 0; gap:14px; }
+            .brand { display:flex; align-items:center; gap:12px; font-weight:900; letter-spacing:.2px; }
+            .brand-mark {
+                width:38px; height:38px; border-radius:12px;
+                display:grid; place-items:center;
+                background: linear-gradient(145deg, #facc15, #fde68a);
+                color:#111827; font-weight:900;
+                box-shadow: 0 10px 30px rgba(250,204,21,.2);
+            }
+            .brand-text { line-height:1.05; }
+            .brand-text small { display:block; color:var(--muted); font-weight:600; margin-top:3px; }
             .btn {
-                display:inline-block; text-decoration:none; color:#001018;
+                display:inline-flex; align-items:center; justify-content:center; gap:8px;
+                text-decoration:none; color:#111827;
                 background: linear-gradient(90deg, var(--accent), var(--accent2));
-                padding:10px 16px; border-radius:10px; font-weight:700;
+                padding:11px 18px; border-radius:14px; font-weight:800;
+                box-shadow: 0 14px 35px rgba(250,204,21,.18);
+                transition: transform .2s ease, box-shadow .2s ease;
+                border:0;
+                white-space:nowrap;
             }
-            .hero { padding:70px 0 48px; display:grid; grid-template-columns:1.2fr .8fr; gap:24px; }
+            .btn:hover { transform: translateY(-1px); box-shadow: 0 18px 40px rgba(250,204,21,.26); }
+            .btn.secondary {
+                background: transparent;
+                color: var(--text);
+                border:1px solid rgba(255,255,255,.10);
+                box-shadow:none;
+            }
+            .hero {
+                padding:74px 0 48px;
+                display:grid;
+                grid-template-columns: 1.2fr .8fr;
+                gap:24px;
+                align-items:stretch;
+            }
             .card {
-                background: linear-gradient(180deg, rgba(17,24,39,.95), rgba(17,24,39,.75));
-                border:1px solid var(--border); border-radius:16px; padding:20px;
+                background: linear-gradient(180deg, rgba(15,28,45,.96), rgba(10,20,34,.92));
+                border:1px solid var(--line);
+                border-radius:24px;
+                padding:22px;
+                box-shadow: var(--shadow);
             }
-            .headline { font-size: clamp(32px,5vw,54px); margin:0 0 12px; line-height:1.05; }
-            .sub { color:var(--muted); font-size:16px; line-height:1.6; margin-bottom:22px; }
+            .hero-copy {
+                display:flex;
+                flex-direction:column;
+                justify-content:space-between;
+                gap:18px;
+            }
+            .eyebrow {
+                display:inline-flex;
+                align-items:center;
+                gap:8px;
+                font-size:12px;
+                letter-spacing:.12em;
+                text-transform:uppercase;
+                color:#fde68a;
+                margin-bottom:14px;
+                font-weight:800;
+            }
+            .headline {
+                font-size: clamp(34px, 5vw, 60px);
+                margin:0 0 14px;
+                line-height:1.03;
+            }
+            .sub {
+                color:var(--muted);
+                font-size:16px;
+                line-height:1.75;
+                margin:0 0 22px;
+                max-width: 62ch;
+            }
             .chips { display:flex; flex-wrap:wrap; gap:10px; }
-            .chip { font-size:12px; border:1px solid #334155; padding:7px 10px; border-radius:999px; color:#cbd5e1; }
-            .stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; }
-            .stat { background:#0b1220; border:1px solid #1e293b; border-radius:10px; padding:12px; }
-            .stat b { font-size:20px; }
-            h2.section-title { margin:0 0 16px; font-size:24px; }
+            .chip {
+                font-size:12px;
+                border:1px solid rgba(255,255,255,.12);
+                padding:8px 12px;
+                border-radius:999px;
+                color:#dbeafe;
+                background: rgba(255,255,255,.03);
+            }
+            .actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:4px; }
+            .stats { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:14px; }
+            .stat {
+                background: linear-gradient(180deg, rgba(18,33,49,.95), rgba(12,22,35,.95));
+                border:1px solid rgba(255,255,255,.08);
+                border-radius:16px;
+                padding:14px;
+            }
+            .stat div { color:var(--muted); font-size:12px; margin-bottom:6px; }
+            .stat b { font-size:20px; letter-spacing:.2px; }
+            .sidebar-top {
+                display:flex;
+                align-items:center;
+                justify-content:space-between;
+                margin-bottom:16px;
+            }
+            .mini-pill {
+                font-size:12px;
+                padding:7px 10px;
+                border-radius:999px;
+                background: rgba(250,204,21,.13);
+                color:#fde68a;
+                border:1px solid rgba(250,204,21,.22);
+                font-weight:800;
+            }
+            .list {
+                display:grid;
+                gap:12px;
+            }
+            .list-item {
+                display:flex;
+                align-items:flex-start;
+                gap:12px;
+                padding:14px;
+                border-radius:16px;
+                background: rgba(255,255,255,.03);
+                border:1px solid rgba(255,255,255,.06);
+            }
+            .icon {
+                width:36px; height:36px; flex:0 0 36px;
+                border-radius:12px;
+                display:grid; place-items:center;
+                background: linear-gradient(145deg, rgba(250,204,21,.22), rgba(56,189,248,.15));
+                color:#fde68a;
+                font-weight:900;
+            }
+            .list-item h4 { margin:0 0 4px; font-size:15px; }
+            .list-item p { margin:0; color:var(--muted); line-height:1.55; font-size:14px; }
+            .section-title { margin:0 0 16px; font-size:24px; }
             .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
-            .feature p { color:var(--muted); margin:8px 0 0; line-height:1.55; }
-            .faq details { border:1px solid var(--border); border-radius:10px; padding:12px 14px; margin-bottom:10px; }
-            .faq summary { cursor:pointer; font-weight:700; }
-            .faq p { color:var(--muted); margin:10px 0 0; }
-            footer { color:#94a3b8; border-top:1px solid var(--border); margin-top:36px; padding:16px 0 28px; text-align:center; }
+            .feature {
+                padding:18px;
+                border-radius:18px;
+                background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+                border:1px solid rgba(255,255,255,.06);
+            }
+            .feature p { color:var(--muted); margin:8px 0 0; line-height:1.6; }
+            .faq details {
+                border:1px solid rgba(255,255,255,.08);
+                border-radius:16px;
+                padding:14px 16px;
+                margin-bottom:10px;
+                background: rgba(255,255,255,.025);
+            }
+            .faq summary { cursor:pointer; font-weight:800; }
+            .faq p { color:var(--muted); margin:10px 0 0; line-height:1.6; }
+            footer {
+                color:#94a3b8;
+                border-top:1px solid var(--line);
+                margin-top:36px;
+                padding:18px 0 28px;
+                text-align:center;
+            }
             @media (max-width: 900px){
-                .hero { grid-template-columns:1fr; }
+                .hero { grid-template-columns:1fr; padding-top:42px; }
                 .grid-3 { grid-template-columns:1fr; }
+                .nav-inner { flex-direction:column; align-items:flex-start; }
             }
         </style>
     </head>
     <body>
         <div class="nav">
             <div class="container nav-inner">
-                <div class="brand">⚡ Snap Lover Service</div>
-                <a class="btn" href="https://t.me/SnapLoverXBot">Open Bot</a>
+                <div class="brand">
+                    <div class="brand-mark">OX</div>
+                    <div class="brand-text">
+                        OrvixNetworks
+                        <small>Premium file hub & verified access</small>
+                    </div>
+                </div>
+                <div class="actions" style="margin:0;">
+                    <a class="btn secondary" href="https://t.me/TheOrviX">TheOrviX</a>
+                    <a class="btn" href="https://t.me/OrvixAdminBot">Open Bot</a>
+                </div>
             </div>
         </div>
 
         <main class="container">
             <section class="hero">
-                <div>
-                    <h1 class="headline">Snap Lover • Fast File Access & Smart Verification</h1>
-                    <p class="sub">Welcome to the official Snap Lover service page. Generate secure links, verify quickly, and access content with better anti-abuse protection and modern channel workflows.</p>
-                    <div class="chips">
-                        <span class="chip">Secure Verify Flow</span>
-                        <span class="chip">One-Time Links</span>
-                        <span class="chip">Auto-Expiring Invites</span>
-                        <span class="chip">Admin Controls</span>
+                <div class="card hero-copy">
+                    <div>
+                        <div class="eyebrow">Secure access • faster flow • cleaner UI</div>
+                        <h1 class="headline">OrvixNetworks made for quick links, smart verification, and smooth access.</h1>
+                        <p class="sub">Welcome to the official OrvixNetworks page. Generate secure links, verify quickly, and access content through a modern, protected workflow built for real users.</p>
+                        <div class="chips">
+                            <span class="chip">Secure Verify Flow</span>
+                            <span class="chip">One-Time Links</span>
+                            <span class="chip">Auto-Expiring Invites</span>
+                            <span class="chip">Admin Controls</span>
+                        </div>
+                    </div>
+                    <div class="actions">
+                        <a class="btn" href="https://t.me/OrvixAdminBot">Open OrvixAdminBot</a>
+                        <a class="btn secondary" href="https://t.me/OrvixNetworks">Join OrvixNetworks</a>
                     </div>
                 </div>
+
                 <div class="card">
-                    <h2 style="margin-top:0">Official Channels</h2>
-                    <p class="sub" style="margin-bottom:12px">Join updates, support, and latest drops.</p>
-                    <p><a class="btn" style="width:100%; text-align:center; margin-bottom:10px;" href="https://t.me/tunebots">Join @tunebots</a></p>
-                    <p><a class="btn" style="width:100%; text-align:center;" href="https://t.me/Snap_Lover8">Join @Snap_Lover8</a></p>
+                    <div class="sidebar-top">
+                        <h2 style="margin:0;">Official Channels</h2>
+                        <span class="mini-pill">Live</span>
+                    </div>
+                    <p class="sub" style="margin-bottom:14px;">Join updates, support, and latest drops.</p>
+                    <div class="list">
+                        <a class="list-item" style="text-decoration:none;" href="https://t.me/TheOrviX">
+                            <div class="icon">T</div>
+                            <div>
+                                <h4>TheOrviX</h4>
+                                <p>Updates, announcements, and official info.</p>
+                            </div>
+                        </a>
+                        <a class="list-item" style="text-decoration:none;" href="https://t.me/OrvixNetworks">
+                            <div class="icon">N</div>
+                            <div>
+                                <h4>OrvixNetworks</h4>
+                                <p>Main community channel and service hub.</p>
+                            </div>
+                        </a>
+                    </div>
                     <div class="stats">
                         <div class="stat"><div>Uptime</div><b>24x7</b></div>
                         <div class="stat"><div>Invite TTL</div><b>15m</b></div>
@@ -105,19 +276,19 @@ async def root_route_handler(request):
             </section>
 
             <section class="card" style="margin-bottom:18px;">
-                <h2 class="section-title">Why Snap Lover?</h2>
+                <h2 class="section-title">Why OrvixNetworks?</h2>
                 <div class="grid-3">
-                    <article class="feature card" style="padding:16px;">
+                    <article class="feature">
                         <h3 style="margin:0">🔒 Safer Links</h3>
                         <p>Verification tokens are controlled and validated before redirect, preventing direct abuse and improving trust.</p>
                     </article>
-                    <article class="feature card" style="padding:16px;">
+                    <article class="feature">
                         <h3 style="margin:0">⚙️ Admin Friendly</h3>
                         <p>Admins can generate channel join links from forwarded posts and share them instantly with users.</p>
                     </article>
-                    <article class="feature card" style="padding:16px;">
+                    <article class="feature">
                         <h3 style="margin:0">🚀 Smooth Experience</h3>
-                        <p>Clean, modern pages with timer and redirects provide fast onboarding and clear user flow.</p>
+                        <p>Clean pages with a clear timer and redirect flow keep onboarding fast and simple.</p>
                     </article>
                 </div>
             </section>
@@ -134,13 +305,13 @@ async def root_route_handler(request):
                 </details>
                 <details>
                     <summary>Need support?</summary>
-                    <p>Use our channels above or contact the bot admin team from official Telegram pages.</p>
+                    <p>Use the channels above or contact the bot admin team from official Telegram pages.</p>
                 </details>
             </section>
         </main>
 
         <footer>
-            © <span id="year"></span> Snap Lover • Powered by TuneBots
+            © <span id="year"></span> OrvixNetworks • Powered by TheOrviX
         </footer>
 
         <script>
@@ -167,9 +338,37 @@ async def mini_entry_handler(request):
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Mini App Loader</title>
         <style>
-            body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; background:#0b1220; color:#e5e7eb; font-family:Arial,sans-serif; }
-            .card { width:min(92vw,560px); background:#111827; border:1px solid #1f2937; border-radius:14px; padding:22px; text-align:center; }
-            .btn { display:inline-block; margin-top:14px; text-decoration:none; color:#001018; background:linear-gradient(90deg,#22d3ee,#38bdf8); padding:10px 14px; border-radius:10px; font-weight:700; }
+            body {
+                margin:0;
+                min-height:100vh;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                background:
+                    radial-gradient(circle at top, rgba(250,204,21,.10), transparent 35%),
+                    linear-gradient(180deg, #08111d 0%, #0a1524 100%);
+                color:#e5e7eb;
+                font-family:Arial,sans-serif;
+            }
+            .card {
+                width:min(92vw,560px);
+                background:#111827;
+                border:1px solid #1f2937;
+                border-radius:18px;
+                padding:22px;
+                text-align:center;
+                box-shadow: 0 20px 50px rgba(0,0,0,.35);
+            }
+            .btn {
+                display:inline-block;
+                margin-top:14px;
+                text-decoration:none;
+                color:#111827;
+                background:linear-gradient(90deg,#facc15,#fde68a);
+                padding:10px 14px;
+                border-radius:12px;
+                font-weight:800;
+            }
             .muted { color:#9ca3af; font-size:14px; }
         </style>
     </head>
@@ -245,177 +444,32 @@ async def mini_profile_handler(request):
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Mini App • User Profile</title>
         <style>
-            body {{margin:0; font-family:Arial,sans-serif; background:#0b1220; color:#e5e7eb;}}
-            .wrap {{width:min(900px,92vw); margin:24px auto;}}
-            .card {{background:#111827; border:1px solid #1f2937; border-radius:16px; padding:20px;}}
-            .head {{display:flex; gap:18px; align-items:center; flex-wrap:wrap;}}
-            .avatar {{width:110px; height:110px; border-radius:50%; object-fit:cover; border:3px solid #22d3ee;}}
-            .grid {{display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:16px;}}
-            .item {{background:#0f172a; border:1px solid #1e293b; border-radius:10px; padding:12px;}}
-            .label {{color:#9ca3af; font-size:12px;}}
-            .value {{font-weight:700; margin-top:4px;}}
-            .btns {{display:flex; gap:10px; flex-wrap:wrap; margin-top:18px;}}
-            .btn {{text-decoration:none; color:#001018; background:linear-gradient(90deg,#22d3ee,#38bdf8); padding:10px 14px; border-radius:10px; font-weight:700;}}
-            @media(max-width:700px){{ .grid{{grid-template-columns:1fr;}} }}
-        </style>
-    </head>
-    <body>
-        <div class="wrap">
-            <div class="card">
-                <div class="head">
-                    <img src="{escape(profile_pic)}" class="avatar" alt="profile" onerror="this.src='{escape(default_dp)}'" />
-                    <div>
-                        <h2 style="margin:0 0 8px;">Mini App Profile</h2>
-                        <div style="color:#93c5fd;">Welcome to TuneBots x Snap_Lover8</div>
-                    </div>
-                </div>
-
-                <div class="grid">
-                    <div class="item"><div class="label">User ID</div><div class="value">{user_id}</div></div>
-                    <div class="item"><div class="label">Username</div><div class="value">{escape(username)}</div></div>
-                    <div class="item"><div class="label">Name</div><div class="value">{escape(full_name)}</div></div>
-                    <div class="item"><div class="label">First Start (IST)</div><div class="value">{escape(started_ist)}</div></div>
-                    <div class="item"><div class="label">Links Generated</div><div class="value">{links_generated}</div></div>
-                    <div class="item"><div class="label">Status</div><div class="value">Active</div></div>
-                </div>
-
-                <div class="btns">
-                    <a class="btn" href="https://t.me/tunebots">Join TuneBots</a>
-                    <a class="btn" href="https://t.me/Snap_Lover8">Join Snap_Lover8</a>
-                    <a class="btn" href="https://t.me/SnapLoverXBot?start=premium">Buy Premium</a>
-                </div>
-            </div>
-        </div>
-    </body>
-    </html>
-    """
-    return web.Response(text=html_page, content_type="text/html")
-
-
-@routes.get("/verify/{token}", allow_head=True)
-async def verify_route_handler(request):
-    token = request.match_info.get("token", "").strip()
-    if not token:
-        return web.Response(text="Invalid verify link.", status=400)
-
-    if BOT_CLIENT is None:
-        return web.Response(text="Bot is not ready. Please try again.", status=503)
-
-    data = await BOT_CLIENT.mongodb.get_verify_link_by_service_token(token)
-    if not data:
-        return web.Response(text="This verify link is invalid or expired.", status=404)
-
-    if data.get("used"):
-        return web.Response(text="This verify link has already been used.", status=410)
-
-    if data.get("expires_at") and data["expires_at"] <= datetime.now():
-        await BOT_CLIENT.mongodb.remove_verify_link(token)
-        return web.Response(text="This verify link has expired.", status=410)
-
-    delay = max(int(getattr(BOT_CLIENT, "verify_redirect_delay", 5)), 1)
-    short_link = escape(data.get("short_link", ""))
-
-    html_page = f"""
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Verification Link Generator</title>
-        <style>
             body {{
-                margin: 0;
-                padding: 0;
-                min-height: 100vh;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: #0f172a;
-                color: #e2e8f0;
-                font-family: Arial, sans-serif;
+                margin:0;
+                font-family:Arial,sans-serif;
+                background:
+                    radial-gradient(circle at top, rgba(250,204,21,.12), transparent 35%),
+                    linear-gradient(180deg, #08111d 0%, #0a1524 100%);
+                color:#e5e7eb;
             }}
+            .wrap {{ width:min(900px,92vw); margin:24px auto; }}
             .card {{
-                width: min(90vw, 520px);
-                background: #1e293b;
-                border-radius: 14px;
-                padding: 28px;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+                background:#111827;
+                border:1px solid #1f2937;
+                border-radius:18px;
+                padding:20px;
+                box-shadow: 0 20px 50px rgba(0,0,0,.3);
             }}
-            h2 {{
-                margin-top: 0;
-                margin-bottom: 8px;
-            }}
-            .muted {{
-                color: #94a3b8;
-                margin-bottom: 22px;
-            }}
-            .timer {{
-                font-size: 28px;
-                font-weight: 700;
-                margin-bottom: 14px;
-            }}
-            .bar {{
-                width: 100%;
-                height: 10px;
-                border-radius: 999px;
-                background: #334155;
-                overflow: hidden;
-            }}
-            .bar > span {{
-                display: block;
-                height: 100%;
-                width: 0%;
-                background: linear-gradient(90deg, #22d3ee, #38bdf8);
-                transition: width 1s linear;
-            }}
-        </style>
-    </head>
-    <body>
-        <div class="card">
-            <h2>Your link is generating, please wait...</h2>
-            <div class="muted">You will be redirected automatically.</div>
-
-            <div style="margin-bottom:16px; padding:12px; border-radius:10px; background:#0b1220; border:1px solid #334155;">
-                <div style="font-weight:700; margin-bottom:8px;">Official Channels</div>
-                <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                    <a href="https://t.me/tunebots" style="text-decoration:none; color:#0f172a; background:#22d3ee; padding:8px 12px; border-radius:999px; font-weight:700;">TuneBots</a>
-                    <a href="https://t.me/Snap_Lover8" style="text-decoration:none; color:#0f172a; background:#38bdf8; padding:8px 12px; border-radius:999px; font-weight:700;">Snap_Lover8</a>
-                </div>
-            </div>
-
-            <div class="timer"><span id="seconds">{delay}</span>s</div>
-            <div class="bar"><span id="progress"></span></div>
-        </div>
-        <script>
-            let seconds = {delay};
-            const total = seconds;
-            const secEl = document.getElementById('seconds');
-            const progressEl = document.getElementById('progress');
-            const t = setInterval(() => {{
-                seconds -= 1;
-                secEl.innerText = Math.max(seconds, 0);
-                const done = ((total - Math.max(seconds, 0)) / total) * 100;
-                progressEl.style.width = done + '%';
-                if (seconds <= 0) {{
-                    clearInterval(t);
-                    window.location.href = "{short_link}";
-                }}
-            }}, 1000);
-            progressEl.style.width = '0%';
-        </script>
-    </body>
-    </html>
-    """
-    return web.Response(text=html_page, content_type="text/html")
-
-
-@routes.get("/health", allow_head=True)
-async def health_route_handler(request):
-    return web.Response(text="ok", status=200)
-
-
-app = web.Application()
-app.add_routes(routes)
-
-if __name__ == "__main__":
-    web.run_app(app, port=8080)
+            .head {{ display:flex; gap:18px; align-items:center; flex-wrap:wrap; }}
+            .avatar {{ width:110px; height:110px; border-radius:50%; object-fit:cover; border:3px solid #facc15; }}
+            .grid {{ display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:16px; }}
+            .item {{ background:#0f172a; border:1px solid #1e293b; border-radius:12px; padding:12px; }}
+            .label {{ color:#9ca3af; font-size:12px; }}
+            .value {{ font-weight:700; margin-top:4px; }}
+            .btns {{ display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }}
+            .btn {{
+                text-decoration:none;
+                color:#111827;
+                background:linear-gradient(90deg,#facc15,#fde68a);
+                padding:10px 14px;
+                border-r
