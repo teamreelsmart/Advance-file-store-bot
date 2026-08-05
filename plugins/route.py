@@ -472,4 +472,289 @@ async def mini_profile_handler(request):
                 color:#111827;
                 background:linear-gradient(90deg,#facc15,#fde68a);
                 padding:10px 14px;
-                border-r
+                border-radius:12px;
+                font-weight:800;
+            }}
+            @media(max-width:700px){{ .grid{{grid-template-columns:1fr;}} }}
+        </style>
+    </head>
+    <body>
+        <div class="wrap">
+            <div class="card">
+                <div class="head">
+                    <img src="{escape(profile_pic)}" class="avatar" alt="profile" onerror="this.src='{escape(default_dp)}'" />
+                    <div>
+                        <h2 style="margin:0 0 8px;">Mini App Profile</h2>
+                        <div style="color:#fcd34d;">Welcome to TheOrviX x OrvixNetworks</div>
+                    </div>
+                </div>
+
+                <div class="grid">
+                    <div class="item"><div class="label">User ID</div><div class="value">{user_id}</div></div>
+                    <div class="item"><div class="label">Username</div><div class="value">{escape(username)}</div></div>
+                    <div class="item"><div class="label">Name</div><div class="value">{escape(full_name)}</div></div>
+                    <div class="item"><div class="label">First Start (IST)</div><div class="value">{escape(started_ist)}</div></div>
+                    <div class="item"><div class="label">Links Generated</div><div class="value">{links_generated}</div></div>
+                    <div class="item"><div class="label">Status</div><div class="value">Active</div></div>
+                </div>
+
+                <div class="btns">
+                    <a class="btn" href="https://t.me/TheOrviX">Join TheOrviX</a>
+                    <a class="btn" href="https://t.me/OrvixNetworks">Join OrvixNetworks</a>
+                    <a class="btn" href="https://t.me/OrvixAdminBot?start=premium">Buy Premium</a>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    return web.Response(text=html_page, content_type="text/html")
+
+
+@routes.get("/verify/{token}", allow_head=True)
+async def verify_route_handler(request):
+    token = request.match_info.get("token", "").strip()
+    if not token:
+        return web.Response(text="Invalid verify link.", status=400)
+
+    if BOT_CLIENT is None:
+        return web.Response(text="Bot is not ready. Please try again.", status=503)
+
+    data = await BOT_CLIENT.mongodb.get_verify_link_by_service_token(token)
+    if not data:
+        return web.Response(text="This verify link is invalid or expired.", status=404)
+
+    if data.get("used"):
+        return web.Response(text="This verify link has already been used.", status=410)
+
+    if data.get("expires_at") and data["expires_at"] <= datetime.now():
+        await BOT_CLIENT.mongodb.remove_verify_link(token)
+        return web.Response(text="This verify link has expired.", status=410)
+
+    delay = max(int(getattr(BOT_CLIENT, "verify_redirect_delay", 5)), 1)
+    short_link = escape(data.get("short_link", ""))
+
+    html_page = f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Verification Link Generator</title>
+        <style>
+            :root {{
+                --bg:#f8d44a;
+                --text:#111827;
+                --shadow:rgba(0,0,0,.25);
+            }}
+            * {{ box-sizing:border-box; }}
+            body {{
+                margin:0;
+                min-height:100vh;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                background: var(--bg);
+                color: var(--text);
+                font-family: Arial, sans-serif;
+                overflow:hidden;
+            }}
+            .card {{
+                width:min(92vw, 560px);
+                text-align:center;
+                padding:28px 18px 30px;
+            }}
+            .stage {{
+                position:relative;
+                width:100%;
+                height:260px;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                margin-bottom: 10px;
+            }}
+            .ball-wrap {{
+                position:relative;
+                width:160px;
+                height:200px;
+            }}
+            .ball {{
+                position:absolute;
+                left:50%;
+                top:0;
+                width:124px;
+                height:124px;
+                margin-left:-62px;
+                border-radius:50%;
+                background:#212121;
+                box-shadow: inset -8px -10px 0 rgba(255,255,255,.04);
+                transform-origin:center center;
+            }}
+            .ball::before {{
+                content:'';
+                position:absolute;
+                top:16px;
+                left:22px;
+                width:30px;
+                height:18px;
+                border-radius:50%;
+                background:rgba(255,255,255,.92);
+                transform: rotate(-28deg);
+                filter: blur(.1px);
+            }}
+            .ball.fall {{
+                animation: fallToHole 1s ease-in forwards;
+            }}
+            @keyframes fallToHole {{
+                0%   {{ transform: translateY(0) scale(1); opacity:1; }}
+                72%  {{ transform: translateY(104px) scale(1); opacity:1; }}
+                100% {{ transform: translateY(124px) scale(.55); opacity:0; }}
+            }}
+            .hole {{
+                position:absolute;
+                left:50%;
+                top:120px;
+                width:128px;
+                height:34px;
+                margin-left:-64px;
+                border-radius:50%;
+                background: rgba(0,0,0,.18);
+                box-shadow: 0 8px 0 rgba(0,0,0,.18);
+                overflow:hidden;
+            }}
+            .hole::before {{
+                content:'';
+                position:absolute;
+                inset:5px 10px 4px 10px;
+                border-radius:50%;
+                background:#111111;
+            }}
+            .hole::after {{
+                content:'';
+                position:absolute;
+                left:50%;
+                top:-8px;
+                width:96px;
+                height:18px;
+                margin-left:-48px;
+                border-radius:50%;
+                background: rgba(255,255,255,.13);
+                filter: blur(1px);
+            }}
+            .progress {{
+                width:min(420px, 86vw);
+                height:30px;
+                margin:0 auto 20px;
+                border-radius:999px;
+                border:2px solid rgba(0,0,0,.65);
+                background: rgba(255,255,255,.12);
+                overflow:hidden;
+                box-shadow: inset 0 2px 0 rgba(255,255,255,.14);
+            }}
+            .progress > span {{
+                display:block;
+                height:100%;
+                width:0%;
+                background:#111111;
+                border-radius:999px;
+                transition: width 1s linear;
+            }}
+            .title {{
+                font-size:24px;
+                font-weight:800;
+                margin:0 0 2px;
+            }}
+            .muted {{
+                margin:0;
+                font-size:15px;
+                opacity:.8;
+            }}
+            .timer {{
+                margin-top:14px;
+                font-size:16px;
+                font-weight:700;
+            }}
+            .channels {{
+                display:flex;
+                gap:10px;
+                flex-wrap:wrap;
+                justify-content:center;
+                margin-top:18px;
+            }}
+            .pill {{
+                text-decoration:none;
+                color:#111827;
+                background: rgba(255,255,255,.32);
+                border:1px solid rgba(0,0,0,.20);
+                padding:9px 14px;
+                border-radius:999px;
+                font-weight:800;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="card">
+            <div class="stage">
+                <div class="ball-wrap">
+                    <div id="ball" class="ball fall"></div>
+                    <div class="hole"></div>
+                </div>
+            </div>
+
+            <div class="progress"><span id="progress"></span></div>
+
+            <p class="title">Loading...</p>
+            <p class="muted">Please wait while your link is being prepared.</p>
+            <div class="timer"><span id="seconds">{delay}</span>s</div>
+
+            <div class="channels">
+                <a href="https://t.me/TheOrviX" class="pill">TheOrviX</a>
+                <a href="https://t.me/OrvixNetworks" class="pill">OrvixNetworks</a>
+            </div>
+        </div>
+
+        <script>
+            let seconds = {delay};
+            const total = seconds;
+            const secEl = document.getElementById('seconds');
+            const progressEl = document.getElementById('progress');
+            const ball = document.getElementById('ball');
+
+            function restartBall() {{
+                ball.classList.remove('fall');
+                void ball.offsetWidth;
+                ball.classList.add('fall');
+            }}
+
+            function tick() {{
+                seconds -= 1;
+                secEl.innerText = Math.max(seconds, 0);
+                const done = ((total - Math.max(seconds, 0)) / total) * 100;
+                progressEl.style.width = done + '%';
+                restartBall();
+
+                if (seconds <= 0) {{
+                    clearInterval(timer);
+                    window.location.href = "{short_link}";
+                }}
+            }}
+
+            progressEl.style.width = '0%';
+            const timer = setInterval(tick, 1000);
+        </script>
+    </body>
+    </html>
+    """
+    return web.Response(text=html_page, content_type="text/html")
+
+
+@routes.get("/health", allow_head=True)
+async def health_route_handler(request):
+    return web.Response(text="ok", status=200)
+
+
+app = web.Application()
+app.add_routes(routes)
+
+if __name__ == "__main__":
+    web.run_app(app, port=8080)
