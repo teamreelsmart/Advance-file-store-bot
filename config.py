@@ -51,8 +51,8 @@ PROTECT = True
 MESSAGES = {
     "START": "<b>›› ʜᴇʏ!!, {first} ~ <blockquote>ʟᴏᴠᴇ ᴘᴏʀɴʜᴡᴀ? ɪ ᴀᴍ ᴍᴀᴅᴇ ᴛᴏ ʜᴇʟᴘ ʏᴏᴜ ᴛᴏ ғɪɴᴅ ᴡʜᴀᴛ ʏᴏᴜ aʀᴇ ʟᴏᴏᴋɪɴɢ ꜰᴏʀ.</blockquote></b>",
     "FSUB": "<b><blockquote>›› ʜᴇʏ ×</blockquote>\n  ʏᴏᴜʀ ғɪʟᴇ ɪs ʀᴇᴀᴅʏ ‼️ ʟᴏᴏᴋs ʟɪᴋᴇ ʏᴏᴜ ʜᴀᴠᴇɴ'ᴛ sᴜʙsᴄʀɪʙᴇᴅ ᴛᴏ ᴏᴜʀ ᴄʜᴀɴɴᴇʟs ʏᴇᴛ, sᴜʙsᴄʀɪʙᴇ ɴᴏᴡ ᴛᴏ ɢᴇᴛ ʏᴏᴜʀ ғɪʟᴇs</b>",
-    "ABOUT": "<b>›› ғᴏʀ ᴍᴏʀᴇ: @TuneBots \n <blockquote expandable>›› ᴜᴘᴅᴀᴛᴇs ᴄʜᴀɴɴᴇʟ: <a href='https://t.me/Snap_Lover8'>Cʟɪᴄᴋ ʜᴇʀᴇ</a> \n›› Nᴇᴡs Rᴏᴏᴍ: <a href='https://t.me/+NbpXnldC3AI2NTU1'>Cʟɪᴄᴋ ʜᴇʀᴇ</a> \n›› sɴᴀᴘ ʟᴏᴠᴇʀ: <a href='https://t.me/+5000jEnshVVmYzg1'>Cʟɪᴄᴋ ʜᴇʀᴇ</a> \n›› Dɪsᴋᴡᴀʟᴀ: <a href='https://t.me/+GHL_Gg64eBZlMTVl'>Cʟɪᴄᴋ ʜᴇʀᴇ</a> \n›› Tᴇʀᴀʙᴏx: <a href='https://t.me/+VoZbnEAO9CxhZWE1'>Cʟɪᴄᴋ ʜᴇʀᴇ</a> \n›› ᴅᴇᴠᴇʟᴏᴘᴇʀ: @SnapLoverXBot</b></blockquote>",
-    "REPLY": "<b>For More Join - @Snap_Lover8</b>",
+    "ABOUT": "<b>›› ғᴏʀ ᴍᴏʀᴇ: @TheOrviX \n <blockquote expandable>›› ᴜᴘᴅᴀᴛᴇs ᴄʜᴀɴɴᴇʟ: @OrvixNetworks ›› ᴅᴇᴠᴇʟᴏᴘᴇʀ: @OrvixAdminBot</b></blockquote>",
+    "REPLY": "<b>For More Join - @OrvixNetworks</b>",
     "SHORT_MSG": "<b>📊 ʜᴇʏ bro, \n\n‼️ ɢᴇᴛ ᴀʟʟ ꜰɪʟᴇꜱ ɪɴ ᴀ ꜱɪɴɢʟᴇ ʟɪɴᴋ ‼️\n\n ⌯ ʏᴏᴜʀ ʟɪɴᴋ ɪꜱ ʀᴇᴀᴅʏ, ᴋɪɴᴅʟʏ ᴄʟɪᴄᴋ ᴏɴ ᴏᴘᴇɴ ʟɪɴᴋ ʙᴜᴛᴛᴏɴ..</b>",
     "START_PHOTO": "https://i.ibb.co/YBtKqn2H/photo-2026-03-05-12-16-54-7613744424618557456.jpg",
     "FSUB_PHOTO": "https://i.ibb.co/mVgCc1Ck/photo-2026-03-05-12-16-43-7613744373078949904.jpg",
@@ -65,7 +65,7 @@ MESSAGES = {
     "REFER_MSG": "<b>🎁 Refer & Earn Program!\nInvite your friends and after successful join, both of you get 1 day premium.</b>\n\n🔗 {invite_link}",
     "PREMIUM_PHOTO": "https://i.ibb.co/YBtKqn2H/photo-2026-03-05-12-16-54-7613744424618557456.jpg",
     "PREMIUM_MSG": "<b>🔒 This file is only for premium users.\n\nPlease buy premium to unlock bot-generated links and get your files instantly.</b>",
-    "PREMIUM_BUTTON_URL": "https://t.me/SnapLoverXBot?start=premium",
+    "PREMIUM_BUTTON_URL": "https://t.me/OrvixAdminBot?start=premium",
     "DEFAULT_PROFILE_PIC": "https://i.ibb.co/SDMHjm76/photo-2026-03-06-12-48-22-7614123618691186708.jpg",
     "SHORT": "https://i.ibb.co/RGsH1m4T/photo-2026-03-05-12-10-50-7613742856955494416.jpg"
 }
